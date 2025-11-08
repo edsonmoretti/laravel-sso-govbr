@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\Contracts\IGovBrAuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Controlador responsável por gerenciar as rotas de autenticação OAuth 2.0 com Gov.br.
@@ -29,7 +30,7 @@ class OAuthController extends Controller
      *
      * @return RedirectResponse
      */
-    public function index()
+    public function index(): RedirectResponse
     {
         return redirect('/user');
     }
@@ -38,9 +39,9 @@ class OAuthController extends Controller
      * Retorna as informações do usuário logado ou uma mensagem de erro se não logado.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function user(Request $request)
+    public function user(Request $request): JsonResponse
     {
         $user = $this->authService->getUser($request);
         if ($user === null) {
@@ -59,7 +60,7 @@ class OAuthController extends Controller
      * @return RedirectResponse
      * @throws \Exception
      */
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         $loginUrl = $this->authService->getLoginUrl($request);
         return redirect($loginUrl);
@@ -73,7 +74,7 @@ class OAuthController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function callback(Request $request)
+    public function callback(Request $request): mixed
     {
         return $this->authService->handleCallback($request);
     }
@@ -84,7 +85,7 @@ class OAuthController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse
     {
         $logoutUrl = $this->authService->logout($request);
         return redirect($logoutUrl);
@@ -95,7 +96,7 @@ class OAuthController extends Controller
      *
      * @return RedirectResponse
      */
-    public function logoutGovBrCallback()
+    public function logoutGovBrCallback(): RedirectResponse
     {
         return redirect('/');
     }
