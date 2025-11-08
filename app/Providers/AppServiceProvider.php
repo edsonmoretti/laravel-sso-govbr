@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Contracts\IGovBrAuthService;
 use App\Services\GovBrPureService;
 use Illuminate\Support\Facades\Event;
+use SocialiteProviders\GovBR\Provider;
 use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
