@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Contracts\IGovBrAuthService;
+use App\Services\GovBrPureService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(\App\Services\Contracts\IGovBrAuthService::class, \App\Services\GovBrPureService::class);
+        $this->app->bind(IGovBrAuthService::class, GovBrPureService::class);
     }
 
     /**
