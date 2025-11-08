@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'govbr' => [
+        'client_id' => env('GOVBR_CLIENT_ID'),
+        'client_secret' => env('GOVBR_CLIENT_SECRET'),
+        'redirect' => env('GOVBR_REDIRECT_URI'),
+        'environment' => env('GOVBR_ENVIRONMENT', 'staging'),
+    ],
 ];
