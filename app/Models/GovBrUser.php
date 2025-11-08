@@ -50,10 +50,10 @@ class GovBrUser
 
     public function __construct(array $data = [])
     {
-        $this->sub = $data['sub'] ?? '';
+        $this->sub = $data['sub'] ?? $data['cpf'] ?? '';
         $this->name = $data['name'] ?? '';
         $this->profile = $data['profile'] ?? null;
-        $this->picture = $data['picture'] ?? null;
+        $this->picture = $data['picture'] ?? $data['avatar_url'] ?? null;
         $this->email = $data['email'] ?? null;
         $this->email_verified = $data['email_verified'] ?? false;
         $this->phone_number = $data['phone_number'] ?? null;

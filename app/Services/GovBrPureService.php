@@ -21,27 +21,11 @@ use RuntimeException;
  * Utiliza OAuth 2.0 com OpenID Connect e PKCE para autenticação segura.
  * Ativada quando a propriedade govbr.auth.type é definida como "pure".
  */
-class GovBrPureService implements IGovBrAuthService
+class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
 {
-    private string $urlProvider;
-    private string $urlService;
-    private string $redirectUri;
-    private string $scopes;
-    private string $clientId;
-    private string $clientSecret;
-    private string $logoutUri;
-
-    public function __construct()
-    {
-        $this->urlProvider = config('sso.govbr.url_provider');
-        $this->urlService = config('sso.govbr.url_service');
-        $this->redirectUri = config('sso.govbr.redirect_uri');
-        $this->scopes = config('sso.govbr.scopes');
-        $this->clientId = config('sso.govbr.client_id');
-        $this->clientSecret = config('sso.govbr.client_secret');
-        $this->logoutUri = config('sso.govbr.logout_uri');
-    }
-
+    /**
+     * @throws RandomException
+     */
     public function getLoginUrl(Request $request): string
     {
         $session = $request->session();
@@ -154,27 +138,6 @@ class GovBrPureService implements IGovBrAuthService
         return $this->urlProvider . '/logout?' . http_build_query([
                 'post_logout_redirect_uri' => $this->logoutUri,
             ]);
-    }
-
-    /**
-     * Recupera os dados do usuário da sessão.
-     */
-    public function getUser(Request $request): ?GovBrUser
-    {
-        $session = $request->session();
-
-        $userJson = $session->get('user');
-        if (!$userJson) {
-            return null;
-        }
-
-        try {
-            $userData = json_decode($userJson, true);
-            return new GovBrUser($userData);
-        } catch (Exception $e) {
-            Log::error('Error deserializing user from session', ['exception' => $e]);
-            return null;
-        }
     }
 
     /**

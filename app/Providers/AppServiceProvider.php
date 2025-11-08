@@ -3,10 +3,11 @@
 namespace App\Providers;
 
 use App\Services\Contracts\IGovBrAuthService;
+use App\Services\GovBrLibService;
 use App\Services\GovBrPureService;
 use Illuminate\Support\Facades\Event;
-use SocialiteProviders\GovBR\Provider;
 use Illuminate\Support\ServiceProvider;
+use SocialiteProviders\GovBR\Provider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(IGovBrAuthService::class, GovBrPureService::class);
+//         $this->app->bind(IGovBrAuthService::class, GovBrPureService::class);
+        $this->app->bind(IGovBrAuthService::class, GovBrLibService::class);
     }
 
     /**

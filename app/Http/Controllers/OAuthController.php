@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Services\Contracts\IGovBrAuthService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Redirector;
 
 /**
  * Controlador responsável por gerenciar as rotas de autenticação OAuth 2.0 com Gov.br.
@@ -58,7 +60,7 @@ class OAuthController extends Controller
      *
      * @param Request $request
      * @return RedirectResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function login(Request $request): RedirectResponse
     {
@@ -71,12 +73,12 @@ class OAuthController extends Controller
      * Pode retornar um erro ou redirecionar para a página inicial.
      *
      * @param Request $request
-     * @return mixed
-     * @throws \Exception
+     * @return JsonResponse|RedirectResponse|Redirector
      */
-    public function callback(Request $request): mixed
+    public function callback(Request $request): JsonResponse|RedirectResponse|Redirector
     {
-        return $this->authService->handleCallback($request);
+        $this->authService->handleCallback($request);
+        return redirect('/user');
     }
 
     /**
