@@ -40,7 +40,7 @@ class OAuthController extends Controller
     /**
      * Retorna as informações do usuário logado ou uma mensagem de erro se não logado.
      *
-     * @param Request $request
+     * @param Request $requestcl
      * @return JsonResponse
      */
     public function user(Request $request): JsonResponse

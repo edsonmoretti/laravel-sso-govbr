@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 interface IGovBrAuthService
 {
+    const AUTH_TYPE_PURE = 'pure';
+    const AUTH_TYPE_LIB = 'lib';
+
     public function getLoginUrl(Request $request);
 
     public function handleCallback(Request $request);

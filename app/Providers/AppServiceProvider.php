@@ -17,8 +17,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-//         $this->app->bind(IGovBrAuthService::class, GovBrPureService::class);
-        $this->app->bind(IGovBrAuthService::class, GovBrLibService::class);
+        if (env('GOVBR_AUTH_TYPE') === IGovBrAuthService::AUTH_TYPE_PURE) {
+            $this->app->bind(IGovBrAuthService::class, GovBrPureService::class);
+        } else {
+            $this->app->bind(IGovBrAuthService::class, GovBrLibService::class);
+        }
     }
 
     /**
