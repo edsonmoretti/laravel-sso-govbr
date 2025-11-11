@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\GovBrUser;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 /**
  * Implementação pura (sem bibliotecas externas) do serviço de autenticação Gov.br.
@@ -50,5 +52,18 @@ abstract class GovBrAbstractService
             Log::error('Error deserializing user from session', ['exception' => $e]);
             return null;
         }
+    }
+
+    public function getUserPhoto(Request $request): string
+    {
+        $session = $request->session();
+        $token = $session->get('token');
+        if (!$token) {
+            throw new RuntimeException('Token not found');
+        }
+        $response = Http::withToken($token)
+            ->get($this->urlProvider . '/userinfo/picture');
+        $rawBody = $response->body();
+        return base64_encode($rawBody);
     }
 }

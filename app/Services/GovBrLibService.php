@@ -34,6 +34,7 @@ class GovBrLibService extends GovBrAbstractService implements IGovBrAuthService
             $userInfo = Socialite::driver('govbr')->user();
             $userInfo = new GovBrUser($userInfo->attributes);
             $session->put('user', json_encode($userInfo));
+            // $session->put('token', $userInfo->token);
         } catch (Exception $e) {
             Log::error($e->getMessage());
         }

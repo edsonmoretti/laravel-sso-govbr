@@ -24,6 +24,7 @@ use RuntimeException;
 class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
 {
     /**
+     * Passo 3
      * @throws RandomException
      */
     public function getLoginUrl(Request $request): string
@@ -31,10 +32,11 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
         $session = $request->session();
 
         // Gera parâmetros de segurança: state, nonce e PKCE
-        $state = Str::uuid()->toString();
-        $nonce = Str::uuid()->toString();
-        $codeVerifier = $this->generateCodeVerifier();
-        $codeChallenge = $this->generateCodeChallenge($codeVerifier);
+        $state = Str::uuid()->toString(); // Valor usado para manter o estado entre a solicitação e o retorno de chamada.
+        $nonce = Str::uuid()->toString(); // Sequência de caracteres usado para associar uma sessão do serviço consumidor a um Token de ID e para atenuar os ataques de repetição. Pode ser um valor aleatório, mas que não seja de fácil dedução. Item obrigatório.
+
+        $codeVerifier = $this->generateCodeVerifier(); // Senha gerada pelo cliente (essa aplicação) para proteger o code da requisicao do Authorize (atribuido ao code_verifier )
+        $codeChallenge = $this->generateCodeChallenge($codeVerifier); // Para proteger a senha enviada no parâmetro code_challenge. O padrão será «S256».
 
         // Armazena na sessão para validação posterior
         $session->put('oauth_state', $state);
@@ -46,7 +48,7 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
                 'response_type' => 'code',
                 'client_id' => $this->clientId,
                 'scope' => $this->scopes,
-                'redirect_uri' => $this->redirectUri,
+                'redirect_uri' => $this->redirectUri, // URI que após o authorize o usuário será direcionado no navegador
                 'nonce' => $nonce,
                 'state' => $state,
                 'code_challenge' => $codeChallenge,
@@ -58,6 +60,7 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
     }
 
     /**
+     * Passo 4, 5 e 6
      * @throws ConnectionException
      * @throws Exception
      */
@@ -66,7 +69,7 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
         $session = $request->session();
 
         $code = $request->query('code');
-        $state = $request->query('state');
+        $state = $request->query('state'); // Para verificar se é o mesmo estado da requisição
         $error = $request->query('error');
         $errorDescription = $request->query('error_description');
 
@@ -87,6 +90,7 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
             throw new RuntimeException('Invalid state');
         }
 
+        /* Senha sem criptografia enviada do parâmetro code_challenge presente no Passo 3 */
         $codeVerifier = $session->get('code_verifier');
 
         // Troca o código de autorização por tokens de acesso
@@ -98,7 +102,7 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
         ])->asForm()->post($tokenUrl, [
             'grant_type' => 'authorization_code',
             'code' => $code,
-            'redirect_uri' => $this->redirectUri,
+            'redirect_uri' => $this->redirectUri, //URI de retorno cadastrada para a aplicação cliente no formato URL Encode. Este parâmetro não pode conter caracteres especiais conforme consta na especificação auth 2.0 Redirection Endpoint
             'code_verifier' => $codeVerifier,
         ]);
 
@@ -121,6 +125,8 @@ class GovBrPureService extends GovBrAbstractService implements IGovBrAuthService
         if (!$userResponse->successful()) {
             throw new Exception('Failed to get user info: ' . $userResponse->body());
         }
+
+        //$session->put('token', $accessToken);
 
         // Converte a resposta JSON para GovBrUser e armazena na sessão
         $userInfo = new GovBrUser($userResponse->json());

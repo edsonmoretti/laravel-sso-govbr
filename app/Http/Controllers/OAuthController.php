@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Redirector;
 
 /**
@@ -53,6 +54,16 @@ class OAuthController extends Controller
             ], 401);
         }
         return response()->json($user);
+    }
+
+    public function userPhoto(Request $request): Response
+    {
+        $photoBase64 = $this->authService->getUserPhoto($request);
+        // exibe em tela formato web
+        return response()->make(base64_decode($photoBase64), 200, [
+            'Content-Type' => 'image/jpeg',
+            'Content-Disposition' => 'inline; filename="user_photo.jpg"',
+        ]);
     }
 
     /**

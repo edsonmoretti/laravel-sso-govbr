@@ -16,4 +16,8 @@ interface IGovBrAuthService
     public function logout(Request $request);
 
     public function getUser(Request $request);
+
+    public function getUserPhoto(Request $request);
+
+
 }
